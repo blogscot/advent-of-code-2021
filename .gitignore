@@ -4,3 +4,5 @@
 pom.xml
 intro.md
 *_test.clj
+*.md
+LICENSE
