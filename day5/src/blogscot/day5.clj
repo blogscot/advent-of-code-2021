@@ -45,32 +45,24 @@
         (let [new-point {:x (+ (point :x) dx) :y (+ (point :y) dy)}]
           (recur new-point (conj points new-point)))))))
 
-(defn collect-points [lines]
-  (apply concat (map build-points lines)))
+(defn solve-with [filter-fn filename]
+  (let [all-points (get-all-points filename)
+        [width height] (get-dimenions all-points)
+        all-lines (map (fn [[x y]] {:start x :end y})
+                       (partition 2 all-points))
+        points (mapcat build-points (filter-fn all-lines))
+        domain (vec (repeat height (vec (repeat width 0))))
+        updated-domain (reduce (fn [domain point]
+                                 (update-in domain [(:y point) (:x point)] inc))
+                               domain points)]
+    (count (filter #(> % 1) (apply concat updated-domain)))))
 
-(defn solve-with [filter-fn]
-  (fn [filename]
-    (let [all-points (get-all-points filename)
-          [width height] (get-dimenions all-points)
-          all-lines (map (fn [[x y]] {:start x :end y})
-                         (partition 2 all-points))
-          points (collect-points (filter-fn all-lines))
-          domain (vec (repeat height (vec (repeat width 0))))
-          updated-domain (reduce (fn [domain point]
-                                   (update-in domain [(:y point) (:x point)] inc))
-                                 domain points)]
-      (count (filter #(> % 1) (apply concat updated-domain))))))
-
-; part 1
-
-(def solve-part1 (solve-with get-horizontal-vertical-lines))
+(def solve-part1 (partial solve-with get-horizontal-vertical-lines))
 
 (solve-part1 "data.txt")
 (solve-part1 "puzzle.txt")
 
-; part 2
-
-(def solve-part2 (solve-with identity))
+(def solve-part2 (partial solve-with identity))
 
 (solve-part2 "data.txt")
 (solve-part2 "puzzle.txt")
