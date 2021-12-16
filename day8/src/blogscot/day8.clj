@@ -21,8 +21,8 @@
 
 (defn process-reading [reading]
   (let [[line output-values] (mapv #(map set %) reading)
-        groups (group-by count line)
-        {[one] 2 [seven] 3 [four] 4 five-segments 5 six-segments 6 [eight] 7} groups
+        {[one] 2 [seven] 3 [four] 4
+         five-segments 5 six-segments 6 [eight] 7} (group-by count line)
         c-and-f (set/intersection seven one)
         [three] (filter #(set/superset? % c-and-f) five-segments)
         [six] (remove #(set/superset? % c-and-f) six-segments)
