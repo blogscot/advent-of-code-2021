@@ -6,9 +6,9 @@
   (let [lines (str/split-lines (slurp filename))]
     (mapv #(mapv read-string (str/split % #"")) lines)))
 
-(defn find-adjacent-points [[height width] [row col]]
+(defn find-adjacent-points [[width height] [row col]]
   (let [adjacent [[(dec row) col] [row (inc col)] [(inc row) col] [row (dec col)]]]
-    (filter (fn [[x y]] (and (nat-int? x) (nat-int? y) (< x width) (< y height))) adjacent)))
+    (filter (fn [[y x]] (and (nat-int? x) (nat-int? y) (< x width) (< y height))) adjacent)))
 
 (defn low-point? [height-map dimensions point]
   (let [value (get-in height-map point)
@@ -52,7 +52,7 @@
   (let [height-map (get-height-map filename)
         low-points (find-low-points height-map)
         visited-map (atom (mapv (fn [row] (mapv #(assoc {} :visited (= % 9)) row)) height-map))
-        dimensions [(count @visited-map) (count (first @visited-map))]
+        dimensions [(count (first @visited-map)) (count @visited-map)]
         basins (map #(find-basin visited-map dimensions % #{}) low-points)]
     (apply * (take-last 3 (sort (map count basins))))))
 
