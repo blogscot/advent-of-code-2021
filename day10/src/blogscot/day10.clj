@@ -9,19 +9,15 @@
     \{ \}
     \< \>))
 
-(defn score-corrupt [char]
+(defn matcher [[a b c d] char]
   (case char
-    \) 3
-    \] 57
-    \} 1197
-    \> 25137))
+    \) a
+    \] b
+    \} c
+    \> d))
 
-(defn score-incomplete [char]
-  (case char
-    \) 1
-    \] 2
-    \} 3
-    \> 4))
+(def score-corrupt (partial matcher [3 57 1197 25137]))
+(def score-incomplete (partial matcher [1 2 3 4]))
 
 (defn check-chunk [chunk]
   (let [length (count chunk)]
