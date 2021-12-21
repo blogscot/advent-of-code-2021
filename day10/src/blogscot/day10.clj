@@ -54,7 +54,7 @@
         incomplete-chunks (remove nil? (map :incomplete (map check-chunk chunks)))
         total-scores (sort (map (comp total-score (partial map score-incomplete)) incomplete-chunks))
         number-items (count total-scores)]
-    (nth total-scores (int (/ number-items 2)))))
+    (nth total-scores (quot number-items 2))))
 
 (solve-part2 "data.txt")
 (solve-part2 "puzzle.txt")
