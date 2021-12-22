@@ -46,15 +46,12 @@
 (solve-part1 "data.txt")
 (solve-part1 "puzzle.txt")
 
-(defn total-score [scores]
-  (reduce (fn [acc val] (+ val (* 5 acc))) 0 scores))
-
 (defn solve-part2 [filename]
   (let [chunks (str/split-lines (slurp filename))
         incomplete-chunks (remove nil? (map :incomplete (map check-chunk chunks)))
-        total-scores (sort (map (comp total-score (partial map score-incomplete)) incomplete-chunks))
-        number-items (count total-scores)]
-    (nth total-scores (quot number-items 2))))
+        total-scores (map (comp (partial reduce #(+ %2 (* 5 %)) 0)
+                                (partial map score-incomplete)) incomplete-chunks)]
+    (nth (sort total-scores) (quot (count total-scores) 2))))
 
 (solve-part2 "data.txt")
 (solve-part2 "puzzle.txt")
