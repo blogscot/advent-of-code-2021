@@ -16,7 +16,7 @@
 (defn reset [state row col]
   (let [current (get-in state [row col :value])]
     (if (> current 9)
-      (update-in state [row col :value] (constantly 0))
+      (assoc-in state [row col :value] 0)
       state)))
 
 (defn find-adjacent-points [[height width] [row col]]
@@ -28,8 +28,8 @@
     (filter (fn [[y x]] (and (nat-int? x) (nat-int? y) (< x width) (< y height))) adjacents)))
 
 (defn flash-at [state row col]
-  (let [octupus (get-in state [row col])]
-    (if (and (> (octupus :value) 9) (false? (octupus :flashed)))
+  (let [{value :value flashed :flashed} (get-in state [row col])]
+    (if (and (> value 9) (false? flashed))
       (let [height (count state)
             width (count (first state))
             neighbours (find-adjacent-points [height width] [row col])
@@ -39,12 +39,11 @@
 
 (defn flash [state]
   (let [coords (get-coords state)
-        reset-flashing (reduce (fn [state [row col]] (update-in state [row col :flashed] (constantly false))) state coords)]
+        reset-flashing (reduce (fn [state [row col]] (assoc-in state [row col :flashed] false)) state coords)]
     (loop [current-state reset-flashing]
-      (let [done (not-any? #(and (> (:value %) 9) (false? (:flashed %))) (flatten current-state))]
-        (if (true? done)
-          current-state
-          (recur (reduce (fn [state [row col]] (flash-at state row col)) current-state coords)))))))
+      (if (not-any? #(and (> (:value %) 9) (false? (:flashed %))) (flatten current-state))
+        current-state
+        (recur (reduce (fn [state [row col]] (flash-at state row col)) current-state coords))))))
 
 (defn count-flashes [state]
   (count (filter :flashed (flatten state))))
