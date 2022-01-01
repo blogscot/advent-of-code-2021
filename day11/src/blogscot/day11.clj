@@ -25,7 +25,7 @@
                               x [-1 0 1]]
                           [y x]))
         adjacents (map (fn [[r c]] [(+ row r) (+ col c)]) offsets)]
-    (filter (fn [[y x]] (and (nat-int? x) (nat-int? y) (< x width) (< y height))) adjacents)))
+    (filter (fn [[y x]] (and (< -1 x width) (< -1 y height))) adjacents)))
 
 (defn flash-at [state row col]
   (let [{value :value flashed :flashed} (get-in state [row col])]
