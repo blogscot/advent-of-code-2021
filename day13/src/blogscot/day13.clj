@@ -3,9 +3,9 @@
   (:require [clojure.string :as str]))
 
 (defn get-data [filename]
-  (let [parts (partition-by #(= % "") (str/split-lines (slurp filename)))
-        coords (mapv (comp #(mapv read-string %) #(str/split % #",")) (first parts))
-        folds  (map (comp (fn [[_ b c]] [b (read-string c)]) first #(re-seq #"([xy])=(\d+)" %)) (nth parts 2))]
+  (let [[raw-coords _ raw-folds] (partition-by #(= % "") (str/split-lines (slurp filename)))
+        coords (mapv (comp #(mapv read-string %) #(str/split % #",")) raw-coords)
+        folds  (map (comp (fn [[_ b c]] [b (read-string c)]) first #(re-seq #"([xy])=(\d+)" %)) raw-folds)]
     {:coords coords :folds folds}))
 
 (defn fold-at [edge pos]
