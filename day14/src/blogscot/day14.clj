@@ -2,8 +2,10 @@
   (:gen-class)
   (:require [clojure.string :as str]))
 
+(defrecord Pair [count left right])
+
 (defn into-pairs [letters]
-  (map (fn [[a b]] (assoc {} :count 1 :left a :right b)) (partition-all 2 1 letters)))
+  (map (fn [[a b]] (->Pair 1 a b)) (partition-all 2 1 letters)))
 
 (defn get-insertion-rules [raw-rules]
   (apply merge-with into
@@ -16,11 +18,11 @@
                     (if (nil? right)
                       pair
                       (let [new-element (pair-insertion-rules [left right])]
-                        [{:count count :left left :right new-element}
-                         {:count count :left new-element :right right}]))) pairs))))
+                        [(->Pair count left new-element)
+                         (->Pair count new-element right)]))) pairs))))
 
 (defn update-pairs [pairs]
-  (map (fn [[pair freq]] (assoc pair :count (* (pair :count) freq))) (frequencies pairs)))
+  (map (fn [[pair freq]] (assoc pair :count (* (:count pair) freq))) (frequencies pairs)))
 
 (defn nth-mutation [lines steps]
   (loop [n 0
