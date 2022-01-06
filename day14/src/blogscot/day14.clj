@@ -14,7 +14,7 @@
 
 (defn mutate [raw-rules pairs]
   (let [pair-insertion-rules (get-insertion-rules raw-rules)]
-    (flatten (map (fn [{count :count left :left right :right :as pair}]
+    (flatten (map (fn [{:keys [count left right] :as pair}]
                     (if (nil? right)
                       pair
                       (let [new-element (pair-insertion-rules [left right])]
@@ -29,7 +29,7 @@
          polymer (into-pairs (first lines))]
     (if (= n steps)
       (let [mutations (apply merge-with +
-                             (map (fn [{count :count left :left}] (assoc {} left count)) polymer))
+                             (map (fn [{:keys [count left]}] (assoc {} left count)) polymer))
             freqs (sort (vals mutations))]
         (- (last freqs) (first freqs)))
       (recur (inc n) (update-pairs (mutate (drop 2 lines) polymer))))))
